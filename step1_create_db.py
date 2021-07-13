@@ -11,8 +11,9 @@ import os
 import pandas as pd
 from sqlalchemy import Column, Integer, Float, Date, TEXT
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from utils import engine
 
 Base = declarative_base()
 DATA_FOLDER = "data_files_ml_engineer"
@@ -78,7 +79,6 @@ class UserEmbeddings(Base):
 if __name__ == "__main__":
     
     #Create the database
-    engine = create_engine('sqlite:///csv_test.db')
     Base.metadata.create_all(engine)
     
     # Load Data:
