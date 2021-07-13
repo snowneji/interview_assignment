@@ -42,3 +42,18 @@ The modeling idea is to training a Fasttext embedding for each table based on th
 ```
 python step2_build_model.py
 ```
+
+
+## 4. Model Serving:
+
+- Start the locally hosted Flask app:
+
+```
+sh step3_serve_model.sh
+```
+
+- Then the user can send a Curl `POST` request to the app to get the most similar user recommendation based on the embedding model:
+
+```
+curl -d '{json}' -H 'Content-Type: application/json' http://localhost:80/score
+```

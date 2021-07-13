@@ -13,10 +13,10 @@ from sqlalchemy import Column, Integer, Float, Date, TEXT
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from utils import engine
+from utils import engine, DATA_FOLDER
 
 Base = declarative_base()
-DATA_FOLDER = "data_files_ml_engineer"
+
 
 class CourseTags(Base):
     """

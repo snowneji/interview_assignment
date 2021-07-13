@@ -10,10 +10,7 @@ import pandas as pd
 import numpy as np
 from gensim.models import FastText
 
-from utils import engine
-
-# Folder to save models
-MODEL_ARTIFACT_FOLDER = "artifacts"
+from utils import engine, MODEL_ARTIFACT_FOLDER
 
 # Load the Tables from the local sqlite db:
 course_tags_df = pd.read_sql_table("course_tags", engine)
