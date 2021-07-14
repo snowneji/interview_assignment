@@ -1,7 +1,5 @@
 import json
 import os
-import logging
-
 
 import flask
 import numpy as np
@@ -12,8 +10,6 @@ from sqlalchemy.sql import text
 
 from utils import MODEL_ARTIFACT_FOLDER, engine
 
-
-# logger = logging.getLogger(__name__)
 app = flask.Flask(__name__)
 
 # Load the model artifacts when creating the webapp:
@@ -24,14 +20,6 @@ MODELS["user_course_view_embedding"] = FastText.load(
     os.path.join(MODEL_ARTIFACT_FOLDER, "user_course_view_embedding.model"))
 MODELS["user_interests_embedding"] = FastText.load(
     os.path.join(MODEL_ARTIFACT_FOLDER, "user_interests_embedding.model"))
-
-
-# Sample Input:
-# sample_input = {
-#     "assessment": [("css", 90), ("python", 150)],
-#     "course_view": ["data-science-big-picture", "python-beyond-basics"],
-#     "user_interests": ["python", "data-analysis"],
-# }
 
 # Pre-load embedding table: ( need different mechanism if the table is dynamically updated)
 user_embedding_df:pd.DataFrame = pd.read_sql_table("user_embeddings", engine)
@@ -52,23 +40,18 @@ def score():
     # Get input data:
     input_dict = flask.request.json
     # Json Validation:
-    
-    
+    # (didn't have time for this, intended to do json validation and return 406 if schema doesn't match)
     # Top n:
     top_n:int = input_dict['top_n']
     # Encode to user embedding
     query_user_embedding_vector:np.ndarray = encode(input_dict)
-   
     # Calculate Cosine Similarity:
     query_user_embedding_vector = query_user_embedding_vector.reshape(1,-1)
     cosine_sims = cosine_similarity(query_user_embedding_vector,user_embedding_array).ravel()
-    
     # Recommend the top N most similar user
     idx:list = (-cosine_sims).argsort()[:top_n].tolist()
-    
     chosen_cosine_sims:list = cosine_sims[idx].tolist()
     chosen_user_handle:list = user_embedding_df.user_handle.iloc[idx].tolist()
-    
     
     # Get User info
     connection = engine.connect()
@@ -77,7 +60,6 @@ def score():
     user_info = result.fetchall()
     connection.close()
 
-    
     # Construct output:
     output_dict = {
         chosen_user_handle[idx]:{
@@ -87,8 +69,6 @@ def score():
             "interest_tag":user_info[idx][3],
             }  for idx in range(len(chosen_user_handle))}
     
-    
-
     return json.dumps(output_dict)
 
 
@@ -134,10 +114,6 @@ def encode(input_dict: dict):
     all_avg_embedding = (course_view_embedding +
                          user_interests_embedding + user_interests_embedding)/n_embeddings
     return all_avg_embedding
-
-
-
-
 
 
 if __name__ == '__main__':

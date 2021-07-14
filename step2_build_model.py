@@ -229,6 +229,8 @@ if __name__ == "__main__":
     #
     ###################################################
 
+    # ** Should have used Outer join directly**
+
     # get all users: union of all user handles
     user_base1: set = set(user_embedding_using_assessment_tags.index)
     user_base2: set = set(user_embedding_using_course_view.index)
