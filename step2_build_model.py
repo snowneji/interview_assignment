@@ -276,7 +276,6 @@ if __name__ == "__main__":
         
     display_df.assessment_tag = display_df.assessment_tag.apply(_join)
     display_df = display_df.reset_index()
-    import pdb;pdb.set_trace()
     display_df.to_sql(
         name="display_table",
         con=engine,
