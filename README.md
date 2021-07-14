@@ -42,7 +42,7 @@ conda activate pluralsight_env
 
 Those tables are created based on the provided user data: `course_tags`, `user_assessment_scores`, `user_course_views`, `user_interests`
 
-The following 1 table is created to save the user embeddings which are calcualted in the next step: `user_embeddings`
+The following 2 tables are created to save the user embeddings which are calcualted in the next step and to display user info: `user_embeddings`, `display_table`
 
 ```
 python step1_create_db.py
