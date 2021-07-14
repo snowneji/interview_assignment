@@ -75,6 +75,18 @@ class UserEmbeddings(Base):
     user_handle = Column(Integer, primary_key=True, nullable=False)
     embedding_value = Column(TEXT, nullable=False)
 
+class DisplayTable(Base):
+    """This table saves preloaded information for display purpose.
+        Data will be loaded in in step2_build_model.py
+    """
+    __tablename__ = 'display_table'
+    __table_args__ = {'sqlite_autoincrement': True}
+    
+    user_handle = Column(Integer, primary_key=True, nullable=False)
+    assessment_tag = Column(TEXT, nullable=True)
+    course_id = Column(TEXT, nullable=True)
+    interest_tag = Column(TEXT, nullable=True)
+
 
 if __name__ == "__main__":
     

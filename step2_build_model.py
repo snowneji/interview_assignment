@@ -92,8 +92,9 @@ def get_final_embedding(x: pd.Series):
     output += x["embedding3"] if not np.isnan(x["embedding3"]).any() else 0
     output += x["embedding4"] if not np.isnan(x["embedding4"]).any() else 0
     output /= 3.0  # average
+    output = output.astype(np.float32)
     # save as string  in db, not directly readable, need to do np.fromstring(x) to make it back as array
-    output: str = np.array_str(output)
+    output: str = output.tostring()
     return output
 
 
@@ -248,10 +249,41 @@ if __name__ == "__main__":
     all_user_embeddings = all_user_embeddings[["embedding"]].reset_index()
     # to match the names in the sql table
     all_user_embeddings.columns = ["user_handle", "embedding_value"]
-
     all_user_embeddings.to_sql(
         name="user_embeddings",
         con=engine,
         if_exists="replace",
         index=False,
         index_label=["user_handle", "embedding_value"])
+
+
+
+    ###################################################
+    # Load the table for output display
+    ###################################################
+    
+    display_df:pd.DataFrame = unique_user_tag_score_df[['assessment_tag']].join(
+        unique_user_course_view_df,how='outer').join(
+            unique_user_interests_df,how='outer')
+    
+    def _join(x):
+        """Temporarily join the possible list for display purpose
+        """
+        try:
+            return  ' '.join(x)
+        except TypeError:
+            return str(x)
+        
+    display_df.assessment_tag = display_df.assessment_tag.apply(_join)
+    display_df = display_df.reset_index()
+    import pdb;pdb.set_trace()
+    display_df.to_sql(
+        name="display_table",
+        con=engine,
+        if_exists="replace",
+        index=False,
+        index_label=["user_handle", "assessment_tag", "course_id", "interest_tag"])
+
+
+
+    

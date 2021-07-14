@@ -52,8 +52,36 @@ python step2_build_model.py
 sh step3_serve_model.sh
 ```
 
-- Then the user can send a Curl `POST` request to the app to get the most similar user recommendation based on the embedding model:
+- Then the user can send a Curl `POST` request to the app to get the most similar user recommendation based on the embedding model, the following is an example:
 
 ```
-curl -d '{json}' -H 'Content-Type: application/json' http://localhost:80/score
+curl --header "Content-Type: application/json" --request POST --data '{"top_n":2, "assessment": [["css", 90], ["python", 150]], "course_view": ["data-science-big-picture", "python-beyond-basics"], "user_interests": ["python", "data-analysis"]}'  http://localhost:80/score
 ```
+
+Input field explanations: (Note: since the trained embeddings are Fasttext model, typos can be tolerated)
+
+-- `top_n`: the top n users to recommend
+
+-- `assessment`: a list of list, each inner list contains the assessment tag and the score, the score will be used as the weight when averaging the embedding vectors
+
+-- `course_view`: a list of courses viewed by the user
+
+-- `user_interests`: a list of interest tags for the user
+
+
+The output will be in the following format:
+
+```
+{user_handle:{"similarity": 0.9, "assessment_tag": "tag1 tag2 tag3", "course_id": "course1 course2 course3", "interest_tag": "tag1 tag2 tag3"}
+```
+
+Here is the real output from the input example above:
+
+```
+{"738": {"similarity": 0.8897897005081177, "assessment_tag": "nan", "course_id": null, "interest_tag": "data-analysis python"}, "1026": {"similarity": 0.8597033023834229, "assessment_tag": "python", "course_id": "python-beyond-basics python-getting-started python-natural-language-processing tensorflow-getting-started bitcoin-decentralized-technology hive-complex-analytical-queries python-getting-started tree-based-models-classification angularjs-fundamentals angularjs-fundamentals blockchain-fundamentals python-fundamentals python-getting-started internet-of-things-cyber-security blockchain-fundamentals python-getting-started python-getting-started blockchain-fundamentals python-getting-started blockchain-fundamentals blockchain-fundamentals python-getting-started blockchain-fundamentals python-getting-started blockchain-fundamentals python-getting-started blockchain-fundamentals python-getting-started blockchain-fundamentals blockchain-fundamentals scala-thinking-functionally blockchain-fundamentals scala-thinking-functionally blockchain-fundamentals python-getting-started scala-thinking-functionally blockchain-fundamentals python-getting-started scala-thinking-functionally scala-thinking-functionally scala-thinking-functionally scala-thinking-functionally blockchain-fundamentals python-getting-started scala-thinking-functionally scala-thinking-functionally scala-thinking-functionally blockchain-fundamentals python-getting-started scala-thinking-functionally blockchain-fundamentals", "interest_tag": "python data-analysis python data-analysis python data-analysis"}}
+```
+
+
+# Write-up to answer the questions for the assignment
+
+
