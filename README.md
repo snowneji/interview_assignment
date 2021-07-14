@@ -84,4 +84,31 @@ Here is the real output from the input example above:
 
 # Write-up to answer the questions for the assignment
 
+1. The similarity calculation is essentially based on user word embeddings and the cosine similary. The key here is how the embeddings were calculated. 3 user embedding models (specifically Fasttext) were calculated based on the following tables:
 
+- For `user_assessment_scores`, we train an embedding for each assessment tag based on which assessment tags appear in the same context of each user, and then use the weighted average (weighted by the assessment scores) assessment tags embedding to get the user embedding.
+
+- For `user_course_views`, we train an embedding for each course based on how each user takes them together, and use the average course embedding to define each user in the vector space.
+
+- For `user_interests`, we train an embedding for each interest tag based on how each user have them together, and use the average interest tag embedding to define each user in the vector space.
+
+After we calculated the 3 embedding models during training phase, during the scoring phase the deployed model scoring API will based on the new user assessment result, course view records and interests to find 3 embedding vectors for the user, and then the average will be calculated as the final user embedding. the final user embedding will be searched against all the pre-computed existing user embeddings and recommend the most similar users.
+
+
+
+2. Given the time limit, the implementation is a barely working application, when we have larger scale of data and to serve the model in production environment:
+
+- I'll add some type of message queue between the API and the database to buffer some traffic for the database
+
+- I'll add more components to the app, things such as customized http code, input/output json validation module, monitoring, logging, etc
+
+- I'll consider to move some of the sql queries to stored procedures so that is more elegant and easier to maintain
+
+- In this case the user embedding table is preloaded, but if in actual production scenarios, we probably also need a thread do some periodical pulling for the table
+
+- If we have some more network bound or I/O bound tasks, I'll probably optimize the code with multi-threading or async approach.
+
+- Consider deploy and manage the app using Kubernetes which can auto-scale our applications
+
+
+3. I didn't use the `course_tags` table due to the time limit,  otherwise we can definitely leverage the information contained in that table. Besides, instead of building 3 separate embeddings and calculate the average, which will lose some information, we probably can build some end2end contextual embedding and neural based model to do the recommendation.
