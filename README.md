@@ -7,12 +7,35 @@
 This project constructs a database based on the provided sample customer tables,  builds a recommendation algorithm that recommends the similar users and wrap the algorithm into a consumable webservice.
 
 
+# Special Note about the Modification:
+
+In order to better demonstrate the model output, instead of letting the API take the `user_handle` as the input, I intentionally changed it to something like the following, so that we can better play with the input and evaluate the model output.
+
+```
+{
+    "top_n":2, 
+    "assessment": [["css", 90], ["python", 150]], 
+    "course_view": ["data-science-big-picture", "python-beyond-basics"], 
+    "user_interests": ["python", "data-analysis"]}
+
+```
 
 # Usage
 
-## 1. Create the Conda Environment:
+## 0. Create an `artifacts` folder to save the later models, and make sure the data files are in `data_files_ml_engineer` folder:
+
+```
+mkdir artifacts
+```
+
+
+## 1. Create the Conda Environment and activate it:
 ```
 conda env create -f env.yml
+```
+
+```
+conda activate pluralsight_env
 ```
 
 ## 2. Create database and corresponding data models:
@@ -38,6 +61,8 @@ The modeling idea is to training a Fasttext embedding for each table based on th
 - For `user_interests`, we train an embedding for each interest tag based on how each user have them together, and use the average interest tag embedding to define each user in the vector space.
 
 - The final user embedding is calcualted by the average of `user_assessment_scores` embedding, `user_course_views` embedding and `user_interests` embedding.
+
+- It might take 2-3 minutes to finish the training.
 
 ```
 python step2_build_model.py
