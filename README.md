@@ -64,6 +64,8 @@ The modeling idea is to training a Fasttext embedding for each table based on th
 
 - It might take 2-3 minutes to finish the training.
 
+To train the models, just run the following command:
+
 ```
 python step2_build_model.py
 ```
