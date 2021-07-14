@@ -75,6 +75,7 @@ def score():
     cmd = f'select * from display_table  where user_handle in {tuple(chosen_user_handle)};'
     result = connection.execute(text(cmd))
     user_info = result.fetchall()
+    connection.close()
 
     
     # Construct output:
